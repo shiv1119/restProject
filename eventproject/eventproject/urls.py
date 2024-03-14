@@ -17,9 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from eventapp.views import LoginView
 from eventapp.viewsets import UserViewSet
-from eventapp.views import register, LoginView
+from eventapp.views import UserLoginView, UserRegisterView, user_data, AddEventView, VerifyTokenView
+from django.conf import settings
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -27,6 +28,13 @@ router.register(r'users', UserViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('register/', register, name='register'),
-    path('login/', LoginView.as_view(), name='login'),
-]
+    path('api/register/', UserRegisterView.as_view(), name='user-register'),
+    path('api/login/', UserLoginView.as_view(), name='user-login'),
+    path('api/user/', user_data, name='user_data'),
+    path('api/addevent/', AddEventView.as_view(), name='add_event'),
+    path('api/verify-token/', VerifyTokenView.as_view(), name='verify_token'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.DEBUG:
+   static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
